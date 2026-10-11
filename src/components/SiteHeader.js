@@ -4,10 +4,11 @@
  * Auth state is handled by the AuthNav client sub-component.
  */
 import Link from "next/link";
+import { Suspense } from "react";
 import { getCategories } from "@/lib/api";
 import CategoryNavigation from "./CategoryNavigation";
 import AuthNav from "./AuthNav";
-import { formatBengaliDate } from "@/lib/format";
+import BengaliDate from "./BengaliDate";
 
 export default async function SiteHeader() {
   let categories = [];
@@ -16,8 +17,6 @@ export default async function SiteHeader() {
   } catch {
     // Header still renders without categories on API failure
   }
-
-  const todayBn = formatBengaliDate();
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur-sm">
@@ -34,9 +33,16 @@ export default async function SiteHeader() {
           </Link>
 
           {/* Date (hidden on very small screens) */}
-          <p className="hidden sm:block text-xs text-slate-400 flex-1 text-center">
-            {todayBn}
-          </p>
+          <Suspense
+            fallback={
+              <p
+                className="hidden h-4 flex-1 text-center text-xs text-slate-400 sm:block"
+                aria-hidden="true"
+              />
+            }
+          >
+            <BengaliDate />
+          </Suspense>
 
           {/* Auth nav */}
           <AuthNav />

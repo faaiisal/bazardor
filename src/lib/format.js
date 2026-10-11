@@ -99,9 +99,10 @@ export function formatUnit(unit) {
 
 /**
  * Format the current date in Bengali locale for display in Bangladesh timezone.
+ * @param {Date} date
  * @returns {string}  e.g. "রবিবার, ১২ অক্টোবর ২০২৫"
  */
-export function formatBengaliDate() {
+export function formatBengaliDate(date) {
   try {
     return new Intl.DateTimeFormat("bn-BD", {
       weekday: "long",
@@ -109,9 +110,9 @@ export function formatBengaliDate() {
       month: "long",
       day: "numeric",
       timeZone: "Asia/Dhaka",
-    }).format(new Date());
+    }).format(date);
   } catch {
-    return new Date().toLocaleDateString("bn-BD", {
+    return date.toLocaleDateString("bn-BD", {
       timeZone: "Asia/Dhaka",
     });
   }
