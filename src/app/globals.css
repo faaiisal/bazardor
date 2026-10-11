@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* ============================================================
+   BazarDor Design System
+   ============================================================ */
+
+/* Bengali font — Noto Sans Bengali via Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap");
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --font-noto-bengali: "Noto Sans Bengali", sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-noto-bengali);
+}
+
+/* Base reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-noto-bengali), "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   Price Ticker Animation
+   ============================================================ */
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 40s linear infinite;
+  width: max-content;
+}
+
+/* Pause on hover */
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   Scrollbar hide utility (for category nav)
+   ============================================================ */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================================================
+   Focus visible ring — accessible, not distracting
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Section anchor offset — compensate for sticky header
+   ============================================================ */
+[id] {
+  scroll-margin-top: 100px;
+}
