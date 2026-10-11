@@ -13,7 +13,7 @@ export default function SiteFooter() {
               <span className="font-bold text-emerald-700">বাজার দর</span>
             </div>
             <p className="text-sm text-slate-500">
-              প্রয়োজনীয় পণ্যের দাম এক নজরে।
+              বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে।
             </p>
           </div>
 

@@ -19,13 +19,15 @@ export default function CategoryNavigation({ categories }) {
       className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
     >
       <Link
-        href="/"
+        href="/product"
         className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
-          pathname === "/"
+          pathname === "/" || pathname.startsWith("/product")
             ? "bg-emerald-600 text-white"
             : "bg-white text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200"
         }`}
-        aria-current={pathname === "/" ? "page" : undefined}
+        aria-current={
+          pathname === "/" || pathname.startsWith("/product") ? "page" : undefined
+        }
       >
         সব পণ্য
       </Link>

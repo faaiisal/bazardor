@@ -7,6 +7,14 @@ const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "https://openapi.programming-hero.com/api/bazardor";
 
+class ApiError extends Error {
+  constructor(status, url) {
+    super(`API error ${status}: ${url}`);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 /**
  * Wrapper around fetch with basic error handling.
  * @template T
@@ -18,7 +26,7 @@ async function apiFetch(path) {
   const res = await fetch(url, { next: { revalidate: 300 } });
 
   if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${url}`);
+    throw new ApiError(res.status, url);
   }
 
   const data = await res.json();
@@ -35,7 +43,9 @@ async function apiFetch(path) {
  * @returns {Promise<import('./types').Product[]>}
  */
 export async function getProducts(category) {
-  const path = category ? `/products?category=${category}` : "/products";
+  const path = category
+    ? `/products?category=${encodeURIComponent(category)}`
+    : "/products";
   return apiFetch(path);
 }
 
@@ -45,7 +55,7 @@ export async function getProducts(category) {
  * @returns {Promise<import('./types').Product>}
  */
 export async function getProductById(id) {
-  return apiFetch(`/products/${id}`);
+  return apiFetch(`/products/${encodeURIComponent(id)}`);
 }
 
 /**
@@ -78,9 +88,10 @@ export async function getCategories() {
  */
 export async function getCategoryBySlug(slug) {
   try {
-    return await apiFetch(`/categories/${slug}`);
-  } catch {
-    return null;
+    return await apiFetch(`/categories/${encodeURIComponent(slug)}`);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
   }
 }
 

@@ -2,22 +2,31 @@
   "name": "bazardor",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "auth:migrate": "auth migrate --yes",
+    "auth:check": "auth check --config ./src/lib/auth.js"
   },
   "dependencies": {
+    "@better-auth/kysely-adapter": "1.7.7",
     "@libsql/client": "^0.18.0",
+    "@libsql/kysely-libsql": "^0.4.1",
     "better-auth": "^1.7.7",
     "lucide-react": "^1.55.0",
     "next": "16.4.0",
+    "kysely": "^0.29.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-hot-toast": "^2.6.1"
   },
   "devDependencies": {
+    "auth": "^1.7.7",
     "@tailwindcss/turbopack": "^4",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",

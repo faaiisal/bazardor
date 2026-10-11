@@ -4,8 +4,6 @@
  * Params is a Promise in Next.js 16 — must be awaited.
  */
 import { notFound } from "next/navigation";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import ProductGrid from "@/components/ProductGrid";
 import EmptyState from "@/components/EmptyState";
 import ErrorState from "@/components/ErrorState";
@@ -61,14 +59,12 @@ export default async function CategoryPage({ params, searchParams }) {
   }
 
   return (
-    <>
-      <SiteHeader />
       <main className="flex-1">
         {/* Category hero */}
-        <section className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
-          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+        <section className="bg-slate-100 px-4 py-6 sm:px-6">
+          <div className="mx-auto flex max-w-6xl items-center gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-sm sm:px-7 sm:py-8">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-4xl backdrop-blur-sm">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-4xl">
                 <span role="img" aria-label={category.nameBn}>
                   {category.icon}
                 </span>
@@ -112,7 +108,5 @@ export default async function CategoryPage({ params, searchParams }) {
           )}
         </section>
       </main>
-      <SiteFooter />
-    </>
   );
 }

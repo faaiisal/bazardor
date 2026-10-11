@@ -17,9 +17,9 @@ function TickerItem({ product }) {
   const isDown = change?.dir === "down";
 
   const colorClass = isUp
-    ? "text-emerald-400"
+    ? "text-red-600"
     : isDown
-    ? "text-red-400"
+    ? "text-emerald-600"
     : "text-slate-400";
 
   const Icon = isUp ? TrendingUp : isDown ? TrendingDown : Minus;
@@ -29,10 +29,10 @@ function TickerItem({ product }) {
       <span aria-hidden="true" className="text-base">
         {image}
       </span>
-      <span className="text-slate-200 text-sm font-medium">{nameBn}</span>
-      <span className="text-white font-bold text-sm">
+      <span className="text-slate-700 text-sm font-medium">{nameBn}</span>
+      <span className="text-slate-900 font-bold text-sm">
         ৳{formatPrice(today)}
-        <span className="text-slate-400 font-normal text-xs ml-0.5">
+        <span className="text-slate-500 font-normal text-xs ml-0.5">
           /{formatUnit(unit)}
         </span>
       </span>
@@ -43,7 +43,7 @@ function TickerItem({ product }) {
         </span>
       )}
       {/* Separator */}
-      <span className="text-slate-600 ml-2" aria-hidden="true">•</span>
+      <span className="text-slate-300 ml-2" aria-hidden="true">•</span>
     </span>
   );
 }
@@ -56,7 +56,7 @@ export default function PriceTicker({ products }) {
 
   return (
     <div
-      className="bg-slate-900 border-b border-slate-800 overflow-hidden"
+      className="overflow-hidden border-y border-slate-200 bg-white"
       role="marquee"
       aria-label="আজকের বাজার দর"
     >

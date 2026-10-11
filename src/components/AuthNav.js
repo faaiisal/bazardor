@@ -1,44 +1,55 @@
 "use client";
 
-/**
- * AuthNav — client component that shows auth state in the header.
- * Shows sign-in/sign-up when logged out, profile link + sign-out when logged in.
- *
- * Uses better-auth client. During Phase 1 (before auth is configured),
- * this component renders gracefully in signed-out state.
- */
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { User, LogOut, LogIn, UserPlus } from "lucide-react";
+import toast from "react-hot-toast";
+import { LogIn, LogOut, User, UserPlus } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 export default function AuthNav() {
+  const router = useRouter();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Attempt to get session — if auth client isn't configured yet, fail silently
-    async function loadSession() {
-      try {
-        const { authClient } = await import("@/lib/auth-client");
-        const { data } = await authClient.getSession();
-        setSession(data?.session ?? null);
-      } catch {
-        setSession(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadSession();
+    let active = true;
+
+    authClient
+      .getSession()
+      .then(({ data, error }) => {
+        if (!active) return;
+        if (error) {
+          toast.error("অ্যাকাউন্টের তথ্য লোড করা যায়নি।");
+          return;
+        }
+        setSession(data?.session ? data : null);
+      })
+      .catch(() => {
+        if (active) toast.error("অ্যাকাউন্টের তথ্য লোড করা যায়নি।");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function handleSignOut() {
     try {
-      const { authClient } = await import("@/lib/auth-client");
-      await authClient.signOut();
-      setSession(null);
-      window.location.href = "/";
+      const { error } = await authClient.signOut();
+      if (error) {
+        toast.error("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+        return;
+      }
+      toast.success("সাইন আউট হয়েছে।");
+      router.replace("/");
+      router.refresh();
     } catch {
-      window.location.href = "/";
+      toast.error("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
     }
   }
 
@@ -46,24 +57,56 @@ export default function AuthNav() {
     return <div className="h-8 w-24 animate-pulse rounded-full bg-slate-100" />;
   }
 
-  if (session) {
+  if (session?.user) {
+    const { user } = session;
+    const initials = user.name?.trim().slice(0, 1) || "ব";
+
     return (
-      <div className="flex items-center gap-2">
-        <Link
-          href="/profile"
-          className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
-        >
-          <User size={15} aria-hidden="true" />
-          <span className="hidden sm:inline">প্রোফাইল</span>
-        </Link>
+      <div className="relative">
         <button
-          onClick={handleSignOut}
-          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
-          aria-label="সাইন আউট"
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          className="flex items-center gap-2 rounded-full px-2 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
         >
-          <LogOut size={15} aria-hidden="true" />
-          <span className="hidden sm:inline">সাইন আউট</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-800">
+            {initials}
+          </span>
+          <span className="hidden max-w-28 truncate sm:inline">
+            {user.name || user.email}
+          </span>
+          <span aria-hidden="true">⌄</span>
         </button>
+        {menuOpen && (
+          <div
+            className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-slate-100 bg-white p-3 shadow-xl"
+            role="menu"
+          >
+            <p className="truncate font-semibold text-slate-800">
+              {user.name || "ব্যবহারকারী"}
+            </p>
+            <p className="mb-2 truncate text-xs text-slate-500">{user.email}</p>
+            <Link
+              href="/profile"
+              onClick={() => setMenuOpen(false)}
+              role="menuitem"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-slate-700 hover:bg-emerald-50"
+            >
+              <User size={15} aria-hidden="true" />
+              আমার প্রোফাইল
+            </Link>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              role="menuitem"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+            >
+              <LogOut size={15} aria-hidden="true" />
+              সাইন আউট
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -72,17 +115,17 @@ export default function AuthNav() {
     <div className="flex items-center gap-2">
       <Link
         href="/signin"
-        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400"
+        className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
       >
         <LogIn size={15} aria-hidden="true" />
-        সাইন ইন
+        <span className="hidden sm:inline">সাইন ইন</span>
       </Link>
       <Link
         href="/signup"
-        className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+        className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
       >
         <UserPlus size={15} aria-hidden="true" />
-        সাইন আপ
+        <span className="hidden sm:inline">সাইন আপ</span>
       </Link>
     </div>
   );

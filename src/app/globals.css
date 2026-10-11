@@ -4,9 +4,6 @@
    BazarDor Design System
    ============================================================ */
 
-/* Bengali font — Noto Sans Bengali via Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap");
-
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;

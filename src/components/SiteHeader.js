@@ -12,10 +12,12 @@ import BengaliDate from "./BengaliDate";
 
 export default async function SiteHeader() {
   let categories = [];
+  let categoriesUnavailable = false;
   try {
     categories = await getCategories();
-  } catch {
-    // Header still renders without categories on API failure
+  } catch (error) {
+    categoriesUnavailable = true;
+    console.error("Failed to load categories for site navigation:", error);
   }
 
   return (
@@ -26,9 +28,14 @@ export default async function SiteHeader() {
           {/* Brand */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold text-emerald-700 hover:text-emerald-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 rounded-sm"
+            className="flex items-center gap-2 rounded-sm text-xl font-bold text-emerald-700 transition-colors hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
           >
-            <span aria-hidden="true" className="text-2xl">🛒</span>
+            <span
+              aria-hidden="true"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700 text-xl text-white shadow-sm"
+            >
+              🛒
+            </span>
             <span>বাজার দর</span>
           </Link>
 
@@ -53,6 +60,11 @@ export default async function SiteHeader() {
           <div className="pb-3">
             <CategoryNavigation categories={categories} />
           </div>
+        )}
+        {categoriesUnavailable && (
+          <p className="pb-2 text-xs text-amber-700" role="status">
+            বিভাগগুলো এখন লোড করা যাচ্ছে না।
+          </p>
         )}
       </div>
     </header>

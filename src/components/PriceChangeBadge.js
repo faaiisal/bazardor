@@ -14,9 +14,9 @@ export default function PriceChangeBadge({ dir, pct, size = "md" }) {
   const isDown = dir === "down";
 
   const colorClass = isUp
-    ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-    : isDown
     ? "bg-red-100 text-red-700 border-red-200"
+    : isDown
+    ? "bg-emerald-100 text-emerald-700 border-emerald-200"
     : "bg-slate-100 text-slate-500 border-slate-200";
 
   const Icon = isUp ? TrendingUp : isDown ? TrendingDown : Minus;
